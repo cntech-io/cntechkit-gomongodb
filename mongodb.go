@@ -19,14 +19,14 @@ const (
 )
 
 type MongoDBKit struct {
-	Context     context.Context
+	context     context.Context
 	Client      *mongo.Client
 	Collections map[string]*mongo.Collection
 }
 
 func NewMongoDB() *MongoDBKit {
 	return &MongoDBKit{
-		Context: context.Background(),
+		context: context.Background(),
 	}
 }
 
@@ -41,15 +41,37 @@ func (mdb *MongoDBKit) Connect() *MongoDBKit {
 	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
 	opts := options.Client().ApplyURI(env.ConnectionString).SetServerAPIOptions(serverAPI)
 
-	client, err := mongo.Connect(mdb.Context, opts)
+	client, err := mongo.Connect(mdb.context, opts)
 	if err != nil {
 		panic(fmt.Sprintf("Failed to connect to MongoDB: %v", err))
 	}
 
-	if err := client.Database(env.Database).RunCommand(mdb.Context, bson.D{{Key: "ping", Value: 1}}).Err(); err != nil {
+	if err := client.Database(env.Database).RunCommand(mdb.context, bson.D{{Key: "ping", Value: 1}}).Err(); err != nil {
 		panic(fmt.Sprintf("Failed to ping to MongoDB: %v", err))
 	}
 
 	mdb.Client = client
 	return mdb
+}
+
+func (mdb *MongoDBKit) AttachCollection(collectionName string) *MongoDBKit {
+	env := NewMongoDBEnv()
+
+	collection := mdb.Client.Database(env.Database).Collection(collectionName)
+	if mdb.Collections == nil {
+		newCollectionMap := map[string]*mongo.Collection{
+			collectionName: collection,
+		}
+		mdb.Collections = newCollectionMap
+	} else {
+		mdb.Collections[collectionName] = collection
+	}
+	return mdb
+}
+
+func (mdb *MongoDBKit) Disconnect() {
+	err := mdb.Client.Disconnect(mdb.context)
+	if err != nil {
+		panic(fmt.Sprintf("Failed to disconnect from MongoDB: %v", err))
+	}
 }
