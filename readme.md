@@ -4,7 +4,7 @@
 mongodb := NewMongoDB().
     Connect().
     AttachCollection("fist_collection").
-    AttachCollection("second_collection").
+    AttachCollection("second_collection")
 
 mongodb.Collection["first_collection"].find()
 
