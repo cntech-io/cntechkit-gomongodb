@@ -75,3 +75,7 @@ func (mdb *MongoDBKit) Disconnect() {
 		panic(fmt.Sprintf("Failed to disconnect from MongoDB: %v", err))
 	}
 }
+
+func (mdb *MongoDBKit) Do(collectionName string) *mongo.Collection {
+	return mdb.Collections[collectionName]
+}
