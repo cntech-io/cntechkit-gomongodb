@@ -1,11 +1,13 @@
-module cntechkit-gomongodb
+module github.com/cntech-io/cntechkit-gomongodb
 
 go 1.20
 
-require go.mongodb.org/mongo-driver v1.12.1
+require (
+	github.com/cntech-io/cntechkit-go v1.0.6
+	go.mongodb.org/mongo-driver v1.12.1
+)
 
 require (
-	github.com/cntech-io/cntechkit-go v0.0.0-20230826140140-4cd90251f721
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/montanaflynn/stats v0.0.0-20171201202039-1bf9dbcd8cbe // indirect
