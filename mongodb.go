@@ -25,6 +25,8 @@ type MongoDBKit struct {
 	Collections map[string]*mongo.Collection
 }
 
+var env = NewMongoDBEnv()
+
 func NewMongoDB() *MongoDBKit {
 	return &MongoDBKit{
 		context: context.Background(),
@@ -32,8 +34,6 @@ func NewMongoDB() *MongoDBKit {
 }
 
 func (mdb *MongoDBKit) Connect() *MongoDBKit {
-
-	env := NewMongoDBEnv()
 
 	if env.ConnectionString == "" {
 		panic("MongoDB connection string is empty!")
@@ -60,7 +60,6 @@ func (mdb *MongoDBKit) Connect() *MongoDBKit {
 }
 
 func (mdb *MongoDBKit) AttachCollection(collectionName string) *MongoDBKit {
-	env := NewMongoDBEnv()
 
 	collection := mdb.Client.Database(env.Database).Collection(collectionName)
 	if mdb.Collections == nil {
