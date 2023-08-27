@@ -6,7 +6,7 @@ mongodb := NewMongoDB().
     AttachCollection("fist_collection").
     AttachCollection("second_collection")
 
-mongodb.Collection["first_collection"].find()
+mongodb.Do("first_collection").find()
 
 mongodb.Disconnect()
 ```
