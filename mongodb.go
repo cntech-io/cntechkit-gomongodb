@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	gokit "github.com/cntech-io/cntechkit-go"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -49,6 +50,10 @@ func (mdb *MongoDBKit) Connect() *MongoDBKit {
 	if err := client.Database(env.Database).RunCommand(mdb.context, bson.D{{Key: "ping", Value: 1}}).Err(); err != nil {
 		panic(fmt.Sprintf("Failed to ping to MongoDB: %v", err))
 	}
+
+	gokit.NewLogger(&gokit.LoggerConfig{
+		AppName: "cntechkit-gomongodb",
+	}).Info("Connected to MongoDB")
 
 	mdb.Client = client
 	return mdb
