@@ -3,7 +3,7 @@
 ```go
 mongodb := NewMongoDB().
     Connect().
-    AttachCollection("fist_collection").
+    AttachCollection("first_collection").
     AttachCollection("second_collection")
 
 mongodb.Do("first_collection").find()
