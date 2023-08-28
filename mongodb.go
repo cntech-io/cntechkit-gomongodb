@@ -69,7 +69,10 @@ func (mdb *MongoDBKit) Connect() *MongoDBKit {
 	mdb.Client = client
 
 	if mdb.enableLogger {
-		mdb.Collections["logs"] = mdb.Client.Database(env.Database).Collection("logs")
+		newCollectionMap := map[string]*mongo.Collection{
+			"logs": mdb.Client.Database(env.Database).Collection("logs"),
+		}
+		mdb.Collections = newCollectionMap
 	}
 
 	return mdb
