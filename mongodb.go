@@ -66,11 +66,12 @@ func (mdb *MongoDBKit) Connect() *MongoDBKit {
 		AppName: "cntechkit-gomongodb",
 	}).Info("Connected to MongoDB")
 
+	mdb.Client = client
+
 	if mdb.enableLogger {
 		mdb.Collections["logs"] = mdb.Client.Database(env.Database).Collection("logs")
 	}
 
-	mdb.Client = client
 	return mdb
 }
 
