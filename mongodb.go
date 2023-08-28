@@ -3,9 +3,11 @@ package cntechkitgomongodb
 import (
 	"context"
 	"fmt"
+	"time"
 
 	gokit "github.com/cntech-io/cntechkit-go"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -20,16 +22,25 @@ const (
 )
 
 type MongoDBKit struct {
-	context     context.Context
-	Client      *mongo.Client
-	Collections map[string]*mongo.Collection
+	context      context.Context
+	Client       *mongo.Client
+	Collections  map[string]*mongo.Collection
+	enableLogger bool
+}
+
+type logs struct {
+	ID          primitive.ObjectID `json:"_id"`
+	AppName     string             `json:"app_name"`
+	CreatedAt   time.Time          `json:"created_at"`
+	Description string             `json:"description"`
 }
 
 var env = NewMongoDBEnv()
 
-func NewMongoDB() *MongoDBKit {
+func NewMongoDB(enableLogger bool) *MongoDBKit {
 	return &MongoDBKit{
-		context: context.Background(),
+		context:      context.Background(),
+		enableLogger: enableLogger,
 	}
 }
 
@@ -54,6 +65,10 @@ func (mdb *MongoDBKit) Connect() *MongoDBKit {
 	gokit.NewLogger(&gokit.LoggerConfig{
 		AppName: "cntechkit-gomongodb",
 	}).Info("Connected to MongoDB")
+
+	if mdb.enableLogger {
+		mdb.Collections["logs"] = mdb.Client.Database(env.Database).Collection("logs")
+	}
 
 	mdb.Client = client
 	return mdb
@@ -82,4 +97,21 @@ func (mdb *MongoDBKit) Disconnect() {
 
 func (mdb *MongoDBKit) Do(collectionName string) *mongo.Collection {
 	return mdb.Collections[collectionName]
+}
+
+func (mdb *MongoDBKit) PushLog(appName string, description string) {
+	if mdb.Collections["logs"] == nil {
+		gokit.NewLogger(&gokit.LoggerConfig{
+			AppName: "cntechkit-gomongodb",
+		}).Info("Mongodb logger is not configured!")
+		return
+	}
+	log := &logs{
+		ID:          primitive.NewObjectID(),
+		AppName:     appName,
+		CreatedAt:   time.Now(),
+		Description: description,
+	}
+
+	mdb.Collections["logs"].InsertOne(mdb.context, log)
 }
