@@ -12,5 +12,6 @@ go get github.com/cntech-io/cntechkit-gomongodb/v2
 | &nbsp;&nbsp;&nbsp;&nbsp;.Connect()                               | Connects to mongodb                            |
 | &nbsp;&nbsp;&nbsp;&nbsp;.AttachCollection(collectionName string) | Attachs collection                             |
 | &nbsp;&nbsp;&nbsp;&nbsp;.PushLog()                               | add logs if logger enabled                     |
+| &nbsp;&nbsp;&nbsp;&nbsp;.Do()                                    | enables to reach mongodb methods               |
 | &nbsp;&nbsp;&nbsp;&nbsp;.Run()                                   | Runs server                                    |
 | env.NewMongoDBEnv()                                              | Loads predefined mongodb environment variables |
