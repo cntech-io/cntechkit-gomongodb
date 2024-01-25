@@ -1,7 +1,7 @@
 ### install
 
 ```bash
-go get github.com/cntech-io/cntechkit-gogin/v2
+go get github.com/cntech-io/cntechkit-gomongodb/v2
 ```
 
 ### Methods
