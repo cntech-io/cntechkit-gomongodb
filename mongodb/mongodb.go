@@ -5,23 +5,14 @@ import (
 	"fmt"
 	"time"
 
-	gokit "github.com/cntech-io/cntechkit-go"
+	"github.com/cntech-io/cntechkit-go/v2/logger"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type MongoDBEnvName string
-
-const (
-	MONGODB_USERNAME          MongoDBEnvName = "MONGODB_USERNAME"
-	MONGODB_PASSWORD          MongoDBEnvName = "MONGODB_PASSWORD"
-	MONGODB_DATABASE          MongoDBEnvName = "MONGODB_DATABASE"
-	MONGODB_CONNECTION_STRING MongoDBEnvName = "MONGODB_CONNECTION_STRING"
-)
-
-type MongoDBKit struct {
+type MongoDB struct {
 	context      context.Context
 	Client       *mongo.Client
 	Collections  map[string]*mongo.Collection
@@ -37,14 +28,14 @@ type logs struct {
 
 var env = NewMongoDBEnv()
 
-func NewMongoDB(enableLogger bool) *MongoDBKit {
-	return &MongoDBKit{
+func NewMongoDB(enableLogger bool) *MongoDB {
+	return &MongoDB{
 		context:      context.Background(),
 		enableLogger: enableLogger,
 	}
 }
 
-func (mdb *MongoDBKit) Connect() *MongoDBKit {
+func (mdb *MongoDB) Connect() *MongoDB {
 
 	if env.ConnectionString == "" {
 		panic("MongoDB connection string is empty!")
@@ -62,7 +53,7 @@ func (mdb *MongoDBKit) Connect() *MongoDBKit {
 		panic(fmt.Sprintf("Failed to ping to MongoDB: %v", err))
 	}
 
-	gokit.NewLogger(&gokit.LoggerConfig{
+	logger.NewLogger(&logger.LoggerConfig{
 		AppName: "cntechkit-gomongodb",
 	}).Info("Connected to MongoDB")
 
@@ -78,7 +69,7 @@ func (mdb *MongoDBKit) Connect() *MongoDBKit {
 	return mdb
 }
 
-func (mdb *MongoDBKit) AttachCollection(collectionName string) *MongoDBKit {
+func (mdb *MongoDB) AttachCollection(collectionName string) *MongoDB {
 
 	collection := mdb.Client.Database(env.Database).Collection(collectionName)
 	if mdb.Collections == nil {
@@ -92,20 +83,20 @@ func (mdb *MongoDBKit) AttachCollection(collectionName string) *MongoDBKit {
 	return mdb
 }
 
-func (mdb *MongoDBKit) Disconnect() {
+func (mdb *MongoDB) Disconnect() {
 	err := mdb.Client.Disconnect(mdb.context)
 	if err != nil {
 		panic(fmt.Sprintf("Failed to disconnect from MongoDB: %v", err))
 	}
 }
 
-func (mdb *MongoDBKit) Do(collectionName string) *mongo.Collection {
+func (mdb *MongoDB) Do(collectionName string) *mongo.Collection {
 	return mdb.Collections[collectionName]
 }
 
-func (mdb *MongoDBKit) PushLog(appName string, description string) {
+func (mdb *MongoDB) PushLog(appName string, description string) {
 	if mdb.Collections["logs"] == nil {
-		gokit.NewLogger(&gokit.LoggerConfig{
+		logger.NewLogger(&logger.LoggerConfig{
 			AppName: "cntechkit-gomongodb",
 		}).Info("Mongodb logger is not configured!")
 		return

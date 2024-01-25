@@ -1,9 +1,9 @@
-module github.com/cntech-io/cntechkit-gomongodb
+module github.com/cntech-io/cntechkit-gomongodb/v2
 
 go 1.20
 
 require (
-	github.com/cntech-io/cntechkit-go v1.0.7
+	github.com/cntech-io/cntechkit-go/v2 v2.0.2
 	github.com/joho/godotenv v1.5.1
 	go.mongodb.org/mongo-driver v1.12.1
 )
