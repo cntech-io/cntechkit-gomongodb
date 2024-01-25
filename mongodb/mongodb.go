@@ -12,7 +12,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type MongoDB struct {
+type mongoDB struct {
 	context      context.Context
 	Client       *mongo.Client
 	Collections  map[string]*mongo.Collection
@@ -28,14 +28,14 @@ type logs struct {
 
 var env = NewMongoDBEnv()
 
-func NewMongoDB(enableLogger bool) *MongoDB {
-	return &MongoDB{
+func NewMongoDB(enableLogger bool) *mongoDB {
+	return &mongoDB{
 		context:      context.Background(),
 		enableLogger: enableLogger,
 	}
 }
 
-func (mdb *MongoDB) Connect() *MongoDB {
+func (mdb *mongoDB) Connect() *mongoDB {
 
 	if env.ConnectionString == "" {
 		panic("MongoDB connection string is empty!")
@@ -69,7 +69,7 @@ func (mdb *MongoDB) Connect() *MongoDB {
 	return mdb
 }
 
-func (mdb *MongoDB) AttachCollection(collectionName string) *MongoDB {
+func (mdb *mongoDB) AttachCollection(collectionName string) *mongoDB {
 
 	collection := mdb.Client.Database(env.Database).Collection(collectionName)
 	if mdb.Collections == nil {
@@ -83,18 +83,18 @@ func (mdb *MongoDB) AttachCollection(collectionName string) *MongoDB {
 	return mdb
 }
 
-func (mdb *MongoDB) Disconnect() {
+func (mdb *mongoDB) Disconnect() {
 	err := mdb.Client.Disconnect(mdb.context)
 	if err != nil {
 		panic(fmt.Sprintf("Failed to disconnect from MongoDB: %v", err))
 	}
 }
 
-func (mdb *MongoDB) Do(collectionName string) *mongo.Collection {
+func (mdb *mongoDB) Do(collectionName string) *mongo.Collection {
 	return mdb.Collections[collectionName]
 }
 
-func (mdb *MongoDB) PushLog(appName string, description string) {
+func (mdb *mongoDB) PushLog(appName string, description string) {
 	if mdb.Collections["logs"] == nil {
 		logger.NewLogger(&logger.LoggerConfig{
 			AppName: "cntechkit-gomongodb",
