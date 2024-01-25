@@ -1,15 +1,16 @@
-### mongodb helper methods for go projects
+### install
 
-```go
-mongodb := NewMongoDB(false). // if true, creates logs collection by default on Connect method
-    Connect().
-    AttachCollection("first_collection").
-    AttachCollection("second_collection")
-
-mongodb.Do("first_collection").find()
-
-// if logs collection created, it pushes predefined log records to logs collection
-mongodb.PushLog("app-name","log description") 
-
-mongodb.Disconnect()
+```bash
+go get github.com/cntech-io/cntechkit-gogin/v2
 ```
+
+### Methods
+
+| Method                                                           | Description                                    |
+| ---------------------------------------------------------------- | ---------------------------------------------- |
+| mongodb.NewMongoDB(enableLogger bool)                            | Creates mongodb instance                       |
+| &nbsp;&nbsp;&nbsp;&nbsp;.Connect()                               | Connects to mongodb                            |
+| &nbsp;&nbsp;&nbsp;&nbsp;.AttachCollection(collectionName string) | Attachs collection                             |
+| &nbsp;&nbsp;&nbsp;&nbsp;.PushLog()                               | add logs if logger enabled                     |
+| &nbsp;&nbsp;&nbsp;&nbsp;.Run()                                   | Runs server                                    |
+| env.NewMongoDBEnv()                                              | Loads predefined mongodb environment variables |
