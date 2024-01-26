@@ -1,4 +1,4 @@
-package cntechkitgomongodb
+package mongodb
 
 import (
 	"context"
